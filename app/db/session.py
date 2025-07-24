@@ -6,8 +6,6 @@ from sqlalchemy.orm import sessionmaker
 
 from app.core.config import db_connect_configuration
 
-print(db_connect_configuration)
-
 engine = create_async_engine(**db_connect_configuration)
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 

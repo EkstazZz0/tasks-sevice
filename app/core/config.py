@@ -10,7 +10,7 @@ def get_db_configuration() -> dict[str, Any]:
     if app_env == "production":
         try:
             return {
-                "url": "postgresql + asyncpg://"
+                "url": "postgresql+asyncpg://"
                 + os.environ["DB_USER"]
                 + ":"
                 + os.environ["DB_PASSWORD"]
