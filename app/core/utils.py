@@ -1,10 +1,11 @@
-from fastapi import FastAPI
 import os
-import time
+
+from fastapi import FastAPI
 
 from app.core.config import app_env
 from app.db.repository import init_db
 from app.db.session import engine
+
 
 async def app_lifespan(app: FastAPI):
     await init_db()

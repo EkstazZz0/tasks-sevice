@@ -5,6 +5,7 @@ from app.core.enums import ApplicationEnvironment
 
 app_env = ApplicationEnvironment(os.getenv("APPLICATION_ENVIRONMENT", "test")).value
 
+
 def get_db_configuration() -> dict[str, Any]:
     if app_env == "production":
         try:
@@ -22,7 +23,8 @@ def get_db_configuration() -> dict[str, Any]:
         return {
             "url": "sqlite+aiosqlite:///test.db",
             "connect_args": {"check_same_thread": False},
-            "echo": True
+            "echo": True,
         }
+
 
 db_connect_configuration = get_db_configuration()

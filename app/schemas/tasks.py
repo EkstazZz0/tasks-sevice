@@ -1,7 +1,7 @@
-from sqlmodel import SQLModel, Field
-from uuid import UUID
+from sqlmodel import Field, SQLModel
 
 from app.core.enums import TaskStatus
+
 
 class TaskCreate(SQLModel):
     title: str = Field(min_length=3, max_length=150)

@@ -1,20 +1,17 @@
-from fastapi import APIRouter, Query, HTTPException, status
 from typing import Annotated
 from uuid import UUID
 
-from app.db.session import SessionDep
-from app.db.models import Task
-from app.db.repository import (
-    get_tasks as db_get_tasks,
-    update_task as db_update_task,
-    get_task as db_get_task)
-from app.schemas.tasks import TaskCreate, TaskUpdate
+from fastapi import APIRouter, Query, status
+
 from app.core.enums import TaskStatus
+from app.db.models import Task
+from app.db.repository import get_task as db_get_task
+from app.db.repository import get_tasks as db_get_tasks
+from app.db.repository import update_task as db_update_task
+from app.db.session import SessionDep
+from app.schemas.tasks import TaskCreate, TaskUpdate
 
-
-router = APIRouter(
-    prefix="/tasks"
-)
+router = APIRouter(prefix="/tasks")
 
 
 @router.post("", response_model=Task, status_code=status.HTTP_201_CREATED)
@@ -31,9 +28,11 @@ async def get_tasks(
     session: SessionDep,
     limit: Annotated[int | None, Query(gt=0, le=100)] = 10,
     offset: Annotated[int | None, Query(ge=0)] = 0,
-    status: Annotated[TaskStatus | None, Query()] = None
+    status: Annotated[TaskStatus | None, Query()] = None,
 ):
-    return await db_get_tasks(session=session, limit=limit, offset=offset, status=status)
+    return await db_get_tasks(
+        session=session, limit=limit, offset=offset, status=status
+    )
 
 
 @router.get("/{task_id}", response_model=Task)
@@ -44,7 +43,9 @@ async def get_task(session: SessionDep, task_id: UUID):
 @router.put("/{task_id}", response_model=Task)
 async def update_task(session: SessionDep, task_id: UUID, update_task_data: TaskUpdate):
     db_task = await db_get_task(session=session, task_id=task_id)
-    return await db_update_task(session=session, db_task=db_task, update_task_data=update_task_data)
+    return await db_update_task(
+        session=session, db_task=db_task, update_task_data=update_task_data
+    )
 
 
 @router.delete("/{task_id}")
@@ -54,7 +55,4 @@ async def delete_task(session: SessionDep, task_id: UUID):
     await session.delete(db_task)
     await session.commit()
 
-    return {
-        "success": True,
-        "detail": f"Task with id {task_id} deleted"
-    }
+    return {"success": True, "detail": f"Task with id {task_id} deleted"}

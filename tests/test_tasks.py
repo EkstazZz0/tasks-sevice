@@ -1,5 +1,4 @@
 import pytest
-
 from datatest import task_create_data
 
 
