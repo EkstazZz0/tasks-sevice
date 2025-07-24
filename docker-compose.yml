@@ -1,0 +1,42 @@
+services:
+  api:
+    container_name: tasks_service_api
+    build: .
+    command: ["--host", "${APP_HOST}", "--port", "8000"]
+    environment:
+      - APPLICATION_ENVIRONMENT=${APPLICATION_ENVIRONMENT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    ports:
+      - "${HOST_API_PORT}:8000"
+    depends_on:
+      - db
+    networks:
+      - backend
+  db:
+    image: postgres:16
+    container_name: tasks_service_db
+    ports:
+      - "${HOST_DB_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+    networks:
+      - backend
+  test:
+    build: .
+    depends_on:
+      - api
+    entrypoint: ["pytest", "--disable-warnings", "-q"]
+
+
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
