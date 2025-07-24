@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=Task)
+@router.post("", response_model=Task, status_code=status.HTTP_201_CREATED)
 async def create_task(session: SessionDep, task_request: TaskCreate):
     db_task = Task.model_validate(task_request)
     session.add(db_task)
