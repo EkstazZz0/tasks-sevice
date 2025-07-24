@@ -5,7 +5,7 @@ from uuid import UUID
 from app.db.session import SessionDep
 from app.db.models import Task
 from app.db.repository import (
-    get_tasks as get_db_tasks,
+    get_tasks as db_get_tasks,
     update_task as db_update_task,
     get_task as db_get_task)
 from app.schemas.tasks import TaskCreate, TaskUpdate
@@ -33,13 +33,17 @@ async def get_tasks(
     offset: Annotated[int | None, Query(ge=0)] = 0,
     status: Annotated[TaskStatus | None, Query()] = None
 ):
-    return await get_db_tasks(session=session, limit=limit, offset=offset, status=status)
+    return await db_get_tasks(session=session, limit=limit, offset=offset, status=status)
+
+
+@router.get("/{task_id}", response_model=Task)
+async def get_task(session: SessionDep, task_id: UUID):
+    return await db_get_task(session=session, task_id=task_id)
 
 
 @router.put("/{task_id}", response_model=Task)
 async def update_task(session: SessionDep, task_id: UUID, update_task_data: TaskUpdate):
     db_task = await db_get_task(session=session, task_id=task_id)
-
     return await db_update_task(session=session, db_task=db_task, update_task_data=update_task_data)
 
 
